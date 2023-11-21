@@ -17,24 +17,22 @@ class CameraSubscriber:
         cv2.namedWindow('Camera 1', cv2.WINDOW_NORMAL)
         cv2.namedWindow('Camera 2', cv2.WINDOW_NORMAL)
         
-        self.lock1 = threading.Lock()
-        self.lock2 = threading.Lock()
+        self.lock = threading.Lock()
 
     def camera1_callback(self, msg):
-        with self.lock1:
+        with self.lock:
             self.camera1_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding="bgr8")
     
     def camera2_callback(self, msg):
-        with self.lock2:
+        with self.lock:
             self.camera2_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding="bgr8")
 
     def display_images(self):
         while not rospy.is_shutdown():
-            with self.lock1:
+            with self.lock:
                 if hasattr(self, 'camera1_image'):
                     cv2.imshow('Camera 1', self.camera1_image)
             
-            with self.lock2:
                 if hasattr(self, 'camera2_image'):
                     cv2.imshow('Camera 2', self.camera2_image)
             cv2.waitKey(1)
